@@ -1,0 +1,23 @@
+services:
+  webui-backend:
+    image: dev:latest
+    container_name: webui-backend
+    working_dir: /workspace/projects/training/web
+    command: >
+      sh -c "uvicorn backend.main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - /workspace:/workspace
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  webui-frontend:
+    image: webui-frontend:latest
+    container_name: webui-frontend
+    build:
+      context: ./web/frontend
+    depends_on:
+      - dev
+    ports:
+      - "5173:80"
+    restart: unless-stopped
