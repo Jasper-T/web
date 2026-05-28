@@ -2,11 +2,12 @@ services:
   webui-backend:
     image: dev:latest
     container_name: webui-backend
-    working_dir: /workspace/projects/training/web
+    working_dir: /workspace/web
     command: >
       sh -c "uvicorn backend.main:app --host 0.0.0.0 --port 8000"
     volumes:
-      - /workspace:/workspace
+      - ./:/workspace/web
+      - D:/works/projects/00_datasets/:/workspace/projects/00_datasets/
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -15,9 +16,11 @@ services:
     image: webui-frontend:latest
     container_name: webui-frontend
     build:
-      context: ./web/frontend
+      context: ./frontend
+      args:
+        DOCKER_HUB_MIRROR: ${DOCKER_HUB_MIRROR:-docker.m.daocloud.io/library}
     depends_on:
-      - dev
+      - webui-backend
     ports:
       - "5173:80"
     restart: unless-stopped

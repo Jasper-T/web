@@ -2,18 +2,13 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
-from backend.app.core.config import WORKSPACE_ROOT
+from backend.app.core.config import FILESYSTEM_ROOT
 from backend.app.schemas.file_tree import FileNode, TreeResponse
 
 
-def resolve_workspace_path(raw_path: str | None) -> Path:
-    path = Path(raw_path or str(WORKSPACE_ROOT))
+def resolve_filesystem_path(raw_path: str | None) -> Path:
+    path = Path(raw_path or str(FILESYSTEM_ROOT))
     resolved = path.resolve(strict=False)
-
-    try:
-        resolved.relative_to(WORKSPACE_ROOT)
-    except ValueError as exc:
-        raise HTTPException(status_code=403, detail="Path is outside /workspace") from exc
 
     if not resolved.exists():
         raise HTTPException(status_code=404, detail="Path does not exist")
@@ -45,10 +40,15 @@ def to_file_node(path: Path) -> FileNode:
     )
 
 
-def read_directory_tree(raw_path: str | None) -> TreeResponse:
-    target = resolve_workspace_path(raw_path)
+def read_directory_tree(
+    raw_path: str | None,
+    offset: int = 0,
+    limit: int = 20,
+    filter_text: str | None = None,
+) -> TreeResponse:
+    target = resolve_filesystem_path(raw_path)
     if not target.is_dir():
-        return TreeResponse(path=str(target), children=[])
+        return TreeResponse(path=str(target), children=[], offset=offset, limit=limit, hasMore=False)
 
     try:
         children = [to_file_node(child) for child in target.iterdir()]
@@ -56,4 +56,15 @@ def read_directory_tree(raw_path: str | None) -> TreeResponse:
         raise HTTPException(status_code=403, detail="Permission denied") from exc
 
     children.sort(key=lambda item: (item.type != "directory", item.name.lower()))
-    return TreeResponse(path=str(target), children=children)
+    if filter_text:
+        children = [child for child in children if filter_text in child.name]
+
+    visible_children = children[offset : offset + limit]
+    has_more = offset + limit < len(children)
+    return TreeResponse(
+        path=str(target),
+        children=visible_children,
+        offset=offset,
+        limit=limit,
+        hasMore=has_more,
+    )

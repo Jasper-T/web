@@ -5,6 +5,7 @@
       :class="{ selected: selectedPath === node.path }"
       :style="{ paddingLeft: `${level * 16 + 8}px` }"
       @click="selectNode"
+      @dblclick="addNode"
     >
       <button
         v-if="node.type === 'directory'"
@@ -15,12 +16,47 @@
       >
         <span v-if="node.loading">...</span>
         <span v-else-if="!node.hasChildren">&nbsp;</span>
-        <span v-else-if="node.expanded">v</span>
-        <span v-else>&gt;</span>
+        <svg
+          v-else-if="node.expanded"
+          class="tree-toggle-icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+        <svg
+          v-else
+          class="tree-toggle-icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M9 6l6 6-6 6" />
+        </svg>
       </button>
       <span v-else class="tree-toggle tree-toggle-placeholder"></span>
 
-      <span class="tree-icon">{{ node.type === "directory" ? "[D]" : "[F]" }}</span>
+      <svg
+        v-if="node.type === 'directory'"
+        class="tree-icon folder-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          d="M3 6.5A2.5 2.5 0 0 1 5.5 4h4.1l2 2H18.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-10Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg
+        v-else
+        class="tree-icon file-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"
+          fill="currentColor"
+        />
+      </svg>
       <span class="tree-name" :title="node.path">{{ node.name }}</span>
     </div>
 
@@ -35,9 +71,23 @@
         :node="child"
         :level="level + 1"
         :selected-path="selectedPath"
+        :hide-load-more="hideLoadMore"
         @select="$emit('select', $event)"
         @toggle="$emit('toggle', $event)"
+        @load-more="$emit('load-more', $event)"
+        @add="$emit('add', $event)"
       />
+      <li v-if="node.hasMoreChildren && !hideLoadMore">
+        <button
+          class="tree-load-more"
+          type="button"
+          :style="{ paddingLeft: `${(level + 1) * 16 + 30}px` }"
+          :disabled="node.loadingMore"
+          @click="$emit('load-more', node)"
+        >
+          {{ node.loadingMore ? "loading..." : "..." }}
+        </button>
+      </li>
     </ul>
   </li>
 </template>
@@ -58,15 +108,27 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  hideLoadMore: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(["select", "toggle"]);
+const emit = defineEmits(["select", "toggle", "load-more", "add"]);
 
 function selectNode() {
-  emit("select", props.node);
+  emit("select", originalNode());
 }
 
 function toggleNode() {
-  emit("toggle", props.node);
+  emit("toggle", originalNode());
+}
+
+function addNode() {
+  emit("add", originalNode());
+}
+
+function originalNode() {
+  return props.node.sourceNode ?? props.node;
 }
 </script>

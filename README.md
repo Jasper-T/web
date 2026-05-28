@@ -1,13 +1,40 @@
 # Workspace File Browser
 
-一个独立的 FastAPI + Vue 3 WebUI，用于浏览默认目录 `/workspace`，并维护右侧已选择路径列表。
+一个独立的 FastAPI + Vue 3 WebUI，用于查看容器内文件系统，并维护右侧已选择路径列表。
+
+## Docker Compose 启动
+
+当前 compose 会启动两个服务：
+
+- `webui-backend`：FastAPI 后端，监听 `8000`
+- `webui-frontend`：Vue 前端静态站点，监听 `5173`
+
+启动前请确认本机 Docker 中已有后端镜像 `dev:latest`，该镜像需要包含 Python、项目依赖以及 `uvicorn`。
+
+```powershell
+docker compose -f docker-compose.yml up -d --build
+```
+
+启动后访问：
+
+- 前端页面：`http://localhost:5173`
+- 后端接口：`http://localhost:8000`
+
+compose 会把当前项目目录挂载到容器内的 `/workspace/web`。后端默认从容器文件系统根目录 `/` 开始浏览，因此页面中也可以展开看到挂载进去的 `workspace/web` 目录。
+
+如果 Docker Hub 拉取镜像较慢，默认会使用 `docker.m.daocloud.io/library` 作为前端构建镜像源。也可以手动覆盖：
+
+```powershell
+$env:DOCKER_HUB_MIRROR="docker.io/library"
+docker compose -f docker-compose.yml up -d --build
+```
 
 ## 开发模式启动
 
 后端：
 
 ```bash
-cd /workspace/projects/training/web
+cd /workspace/web
 python -m pip install -r requirements.txt
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -15,7 +42,7 @@ uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 前端：
 
 ```bash
-cd /workspace/projects/training/web/frontend
+cd /workspace/web/frontend
 npm install
 npm run dev
 ```
@@ -25,7 +52,7 @@ npm run dev
 ## 生产构建
 
 ```bash
-cd /workspace/projects/training/web/frontend
+cd /workspace/web/frontend
 npm install
 npm run build
 ```
@@ -33,7 +60,7 @@ npm run build
 构建完成后，FastAPI 会自动托管 `frontend/dist`：
 
 ```bash
-cd /workspace/projects/training/web
+cd /workspace/web
 uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 

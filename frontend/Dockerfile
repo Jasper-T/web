@@ -1,4 +1,6 @@
-FROM node:20-alpine AS builder
+ARG DOCKER_HUB_MIRROR=docker.m.daocloud.io/library
+
+FROM ${DOCKER_HUB_MIRROR}/node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -10,7 +12,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine
+FROM ${DOCKER_HUB_MIRROR}/nginx:1.27-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html

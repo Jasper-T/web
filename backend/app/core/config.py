@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-WORKSPACE_ROOT = Path("/workspace").resolve()
+FILESYSTEM_ROOT = Path("/").resolve()
 FRONTEND_DIST = Path(__file__).resolve().parents[3] / "frontend" / "dist"
 
 CORS_ORIGINS = [

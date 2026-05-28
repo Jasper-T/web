@@ -14,3 +14,6 @@ class FileNode(BaseModel):
 class TreeResponse(BaseModel):
     path: str
     children: list[FileNode]
+    offset: int = 0
+    limit: int = 20
+    hasMore: bool = False
