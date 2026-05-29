@@ -103,14 +103,14 @@
           <header class="panel-header">
             <div>
               <p class="eyebrow">Actions</p>
-              <h2>功能栏</h2>
+              <h2>dsetkit 工具</h2>
             </div>
           </header>
 
-          <div class="feature-placeholder">
-            <h3>后续步骤与操作将在这里补充</h3>
-            <p>当前页面已预留右侧功能区，后续可以接入不同步骤的参数配置、执行按钮或结果展示。</p>
-          </div>
+          <DsetkitToolsPanel
+            :active-workflow-path="activeWorkflowPath"
+            :workflow-tree-selected-path="workflowTreeSelectedPath"
+          />
         </section>
 
         <footer class="workflow-actions">
@@ -127,6 +127,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import DsetkitToolsPanel from "./components/DsetkitToolsPanel.vue";
 import FileSystemTree from "./components/FileSystemTree.vue";
 import SelectedList from "./components/SelectedList.vue";
 

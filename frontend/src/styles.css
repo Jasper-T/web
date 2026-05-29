@@ -14,7 +14,9 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -542,6 +544,179 @@ input {
   padding: 20px;
 }
 
+.tools-panel {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  margin: 20px;
+}
+
+.tool-context {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.tool-context-label {
+  margin: 0 0 6px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tool-context-path {
+  overflow-x: auto;
+  color: #0f172a;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tool-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tool-tab {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  padding: 10px 12px;
+  font-weight: 800;
+}
+
+.tool-tab:hover {
+  color: #1d4ed8;
+}
+
+.tool-tab.active {
+  border-bottom-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.tool-tab-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 0 0 12px 12px;
+  border-top: 0;
+  padding: 16px;
+}
+
+.tool-panel-intro p {
+  margin: 0;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tool-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tool-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.tool-field input,
+.tool-field select,
+.tool-field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 8px 10px;
+}
+
+.tool-field textarea {
+  overflow: auto;
+  resize: vertical;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.tool-field input:focus,
+.tool-field select:focus,
+.tool-field textarea:focus {
+  border-color: #93c5fd;
+  outline: 2px solid #bfdbfe;
+  outline-offset: 1px;
+}
+
+.tool-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tool-format-names-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.45fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.tool-format-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-format-names-row textarea {
+  flex: 1;
+  min-height: 116px;
+}
+
+.tool-path-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.tool-alert {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tool-alert.error {
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  color: #b91c1c;
+}
+
+.tool-alert.success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.tool-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 2px;
+}
+
 .feature-placeholder {
   margin: 20px;
   border: 1px dashed #cbd5e1;
@@ -560,6 +735,17 @@ input {
 .feature-placeholder p {
   margin: 0;
   line-height: 1.6;
+}
+
+@media (max-width: 1080px) {
+  .tool-field-row,
+  .tool-format-names-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-path-input {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 860px) {

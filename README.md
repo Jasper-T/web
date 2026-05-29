@@ -10,6 +10,7 @@
 - `webui-frontend`：Vue 前端静态站点，监听 `5173`
 
 启动前请确认本机 Docker 中已有后端镜像 `dev:latest`，该镜像需要包含 Python、项目依赖以及 `uvicorn`。
+compose 会额外挂载 `D:/works/projects/dsetkit/` 到容器内 `/workspace/projects/dsetkit/`，并通过 `PYTHONPATH` 让后端直接 import `dsetkit`。
 
 ```powershell
 docker compose -f docker-compose.yml up -d --build
@@ -21,6 +22,7 @@ docker compose -f docker-compose.yml up -d --build
 - 后端接口：`http://localhost:8000`
 
 compose 会把当前项目目录挂载到容器内的 `/workspace/web`。后端默认从容器文件系统根目录 `/` 开始浏览，因此页面中也可以展开看到挂载进去的 `workspace/web` 目录。
+数据集目录会挂载到 `/workspace/projects/00_datasets/`，dsetkit 工具执行时建议使用容器内路径。
 
 如果 Docker Hub 拉取镜像较慢，默认会使用 `docker.m.daocloud.io/library` 作为前端构建镜像源。也可以手动覆盖：
 
@@ -38,6 +40,14 @@ cd /workspace/web
 python -m pip install -r requirements.txt
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+如果在本机直接开发后端，请先安装或暴露 dsetkit：
+
+```powershell
+python -m pip install -e "D:\works\projects\dsetkit[visualize]"
+```
+
+dsetkit 工具位于第二步右侧功能区，当前接入了标注格式转换和标注可视化。可视化依赖 OpenCV，对应依赖已写入 `requirements.txt`。
 
 前端：
 

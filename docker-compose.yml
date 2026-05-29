@@ -5,8 +5,11 @@ services:
     working_dir: /workspace/web
     command: >
       sh -c "uvicorn backend.main:app --host 0.0.0.0 --port 8000"
+    environment:
+      PYTHONPATH: /workspace/projects/dsetkit/src
     volumes:
       - ./:/workspace/web
+      - D:/works/projects/dsetkit/:/workspace/projects/dsetkit/:ro
       - D:/works/projects/00_datasets/:/workspace/projects/00_datasets/
     ports:
       - "8000:8000"
